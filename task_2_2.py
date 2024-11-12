@@ -46,6 +46,8 @@ def newton_method(x, epsilon):
             dx = dxfunction(x[0])
             dy = dyfunction(x[1])
             J = np.array([[dx[0], dy[0]], [dx[1], dy[1]]])
+            if np.linalg.det(J) == 0:
+                raise ValueError(f"Матрица Якобиана не вырождена")
             F = f(x)
         except ValueError as e:
             print("Ошибка в методе Ньютона:", e)
@@ -59,44 +61,40 @@ def newton_method(x, epsilon):
         iteration += 1
     return x, iteration
 
-def main():
-    # Начальные значения
-    x = [1.25, 1.25]
-    epsilon = 1e-10
+# Начальные значения
+x = [1.25, 1.25]
+epsilon = 1e-10
 
-    # Простая итерация
-    result_simple, iteration = iterations_method(x, epsilon)
-    if len(result_simple) != 0:
-        print(f"Метод простой итерации: x = {result_simple[0]:.6f}, y = {result_simple[1]:.6f}")
-        print(f"Количество итераций: {iteration}")
+# Простая итерация
+result_simple, iteration = iterations_method(x, epsilon)
+if len(result_simple) != 0:
+    print(f"Метод простой итерации: x = {result_simple[0]:.6f}, y = {result_simple[1]:.6f}")
+    print(f"Количество итераций: {iteration}")
 
-    # Метод Ньютона
-    result_newton, iteration = newton_method(x, epsilon)
-    if len(result_newton) != 0:
-        print(f"Метод Ньютона: x = {result_newton[0]:.6f}, y = {result_newton[1]:.6f}")
-        print(f"Количество итераций: {iteration}")
+# Метод Ньютона
+result_newton, iteration = newton_method(x, epsilon)
+if len(result_newton) != 0:
+    print(f"Метод Ньютона: x = {result_newton[0]:.6f}, y = {result_newton[1]:.6f}")
+    print(f"Количество итераций: {iteration}")
 
-    solution = fsolve(f, x)
-    print(f"Решение с использованием fsolve: x = {solution[0]:.6f}, y = {solution[1]:.6f}")
+solution = fsolve(f, x)
+print(f"Решение с использованием fsolve: x = {solution[0]:.6f}, y = {solution[1]:.6f}")
 
-    # Графическое представление
-    x_values = np.linspace(-1, 3, 400)
-    y1_values = [f1(x) for x in x_values]
-    y2_values = [f2(x) for x in x_values]
+# Графическое представление
+x_values = np.linspace(-1, 3, 400)
+y1_values = [f1(x) for x in x_values]
+y2_values = [f2(x) for x in x_values]
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(x_values, y1_values, label='x - cos(y) = 1', color='blue')
-    plt.plot(x_values, y2_values, label='y - log(x + 1) = 1', color='red')
-    plt.scatter(x[0], x[1], color='green', label='Начальное приближение', zorder=5)
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('График системы уравнений')
-    plt.axhline(0, color='black', lw=2)
-    plt.axvline(0, color='black', lw=2)
+plt.figure(figsize=(10, 6))
+plt.plot(x_values, y1_values, label='x - cos(y) = 1', color='blue')
+plt.plot(x_values, y2_values, label='y - log(x + 1) = 1', color='red')
+plt.scatter(x[0], x[1], color='green', label='Начальное приближение', zorder=5)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('График системы уравнений')
+plt.axhline(0, color='black', lw=2)
+plt.axvline(0, color='black', lw=2)
 
-    plt.legend()
-    plt.grid()
-    plt.show()
-
-if __name__ == "__main__":
-    main()
+plt.legend()
+plt.grid()
+plt.show()

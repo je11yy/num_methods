@@ -7,9 +7,12 @@ matrix = np.array([
     [ -1, -8, -5 ],
 ], dtype=float)
 
-epsilon = 1e-6
+epsilon = 1e-10
 
 def rotation_method(matrix, epsilon):
+    if not np.array_equal(matrix, matrix.T):
+        raise ValueError("Метод вращения Якоби: матрица должна быть симметрической")
+    
     n = matrix.shape[0]
 
     # собственные значение
@@ -64,30 +67,24 @@ def rotation_method(matrix, epsilon):
 
 def power_method(matrix, epsilon):
     y = np.ones_like(matrix[0])
+    eigen_value = y[0]
 
-    eigen_value_old = 0
     # Умножаем матрицу на текущий вектор
-    y_new = matrix @ y
-    eigen_value = y_new[0] / y[0]
-    iterations = 1
+    iterations = 0
 
     while True:
+        z = matrix @ y
         eigen_value_old = eigen_value
-        y = y_new
-        # Умножаем матрицу на текущий вектор
-        y_new = matrix @ y
-        # Нормируем 
-        y_new_norm = np.linalg.norm(y_new)
-        y_new = y_new / y_new_norm
+        eigen_value = z[0] / y[0]
+        y = z / np.linalg.norm(z)
 
-        eigen_value = y_new.T @ matrix @ y_new
         iterations += 1
 
         # Проверка сходимости
-        if abs(eigen_value - eigen_value_old) < epsilon:
+        if abs(eigen_value_old - eigen_value) < epsilon:
             break
 
-    return eigen_value, iterations
+    return eigen_value, y, iterations
 
 np.set_printoptions(precision=8, suppress=True, formatter={'all': lambda x: f'{x:0.3f}'})
 
@@ -97,8 +94,9 @@ print(f"Собственные значения:\n{eigen_values}\nСобстве
 print(f"Количество итераций: {iterations}\n")
 
 print("Степенной метод\n")
-max_eigen_value, iterations = power_method(matrix, epsilon)
+max_eigen_value, y, iterations = power_method(matrix, epsilon)
 print(f"Максимальное собственное значение по модулю (спектральный радиус):\n", format(max_eigen_value, "0.3f"))
+print(f"Собственный вектор:\n{y}")
 print(f"Количество итераций: {iterations}\n")
 
 print("\nПРОВЕРКА\n")

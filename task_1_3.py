@@ -11,6 +11,14 @@ vector = np.array([ 20, -164, 140, -81 ], dtype=float)
 
 epsilon = 1e-6
 
+def norm(matrix):
+    max_sum = 0.0
+    for line in matrix:
+        summary = sum(line)
+        if max_sum < summary:
+            max_sum = summary
+    return max_sum
+
 def solve(A, b, epsilon):
     n = len(A)
     assert A.shape == (n, n), "Матрица A должна быть квадратной"
@@ -23,6 +31,8 @@ def solve(A, b, epsilon):
         B[i] = -A[i] / A[i, i]
         B[i, i] = 0  # Элементы на главной диагонали зануляем
         c[i] = b[i] / A[i, i]
+    
+    print(f"Норма B: {norm(B)}")
     
     print("Метод простых итераций")
     x, iterations = solve_with_iterations(B, c, epsilon)

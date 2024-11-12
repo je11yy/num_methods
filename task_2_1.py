@@ -6,8 +6,11 @@ import matplotlib.pyplot as plt
 
 function = lambda x : x ** 3 + x ** 2 - x - 0.5
 dfunction = lambda x: 3 * (x ** 2) + 2 * x - 1
+d2function = lambda x: 6 * x + 2
 g = lambda x: math.sqrt(x + 0.5 - x ** 3)
+dg = lambda x: (1.0 - 3 * (x ** 2)) / math.sqrt(x + 0.5 - x ** 3)
 
+# значение производных на концах отрезков!!!
 # метод простых итераций
 def iterations_method(x0, epsilon):
     x = x0
@@ -36,9 +39,20 @@ def dichotomy_method(a, b, epsilon):
             a = midpoint
     return (a + b) / 2.0, iteration
 
+# поиск подходящего приближения
+def find_approx(a, b, epsilon):
+    if (function(a) * function(b) >= 0):
+        raise ValueError("Невозможно найти приближение на данном отрезке")
+    x = a
+    while (x <= b):
+        if (function(x) * d2function(x) > 0):
+            return x
+        x += epsilon
+    raise ValueError("Невозможно найти приближение на данном отрезке")
+
 # метод Ньютона
-def newton_method(x0, epsilon):
-    x = x0
+def newton_method(a, b, epsilon):
+    x = find_approx(a, b, epsilon)
     iteration = 0
     while True:
         x_next = x - function(x) / dfunction(x)
@@ -48,7 +62,19 @@ def newton_method(x0, epsilon):
         x = x_next
     return x, iteration
 
+def check(a, b, epsilon):
+    x = a
+    while (x <= b):
+        y = g(x)
+        print(y)
+        if not (y >= a and y <= b):
+            raise ValueError("Метод секущих не сходится [1]")
+        if not (np.abs(dg(x)) < 1):
+            raise ValueError("Метод секущих не сходится [2]")
+        x += epsilon
+
 def secant_method(x0, x1, epsilon):
+    # check(x0, x1, epsilon)
     iteration = 0
     while True:
         f_x0 = function(x0)
@@ -72,7 +98,7 @@ print(f"Метод простой итерации: корень = ", formatter(
 root_bisection, iter_bisection = dichotomy_method(a, b, epsilon)
 print(f"Метод дихотомии: корень = ", formatter(root_bisection), f", итерации = {iter_bisection}")
 
-root_newton, iter_newton = newton_method(x0, epsilon)
+root_newton, iter_newton = newton_method(a, b, epsilon)
 print(f"Метод Ньютона: корень = ", formatter(root_newton), f", итерации = {iter_newton}")
 
 root_secant, iter_secant = secant_method(a, b, epsilon)
