@@ -1,5 +1,6 @@
 import numpy as np
 import sympy as sp
+import matplotlib.pyplot as plt
 
 X = [1.0, 1.9, 2.8, 3.7, 4.6]
 Y = [2.4142, 1.01818, 0.50953, 0.11836, -0.24008]
@@ -58,3 +59,27 @@ X_star = 2.66666667
 for i in range(len(X) - 1):
     if X_star >= X[i] and X_star <= X[i + 1]:
         print(f"\nНайденное значение: ", polynomials[i].subs(sp.symbols('x'), X_star).evalf(5))
+
+
+# Построение графика
+x = sp.symbols('x')
+x_vals = np.linspace(min(X), max(X), 500)
+y_vals = []
+
+# Вычисление значений каждого полинома на интервале
+for i in range(len(X) - 1):
+    interval_x = np.linspace(X[i], X[i + 1], 100)
+    interval_y = [polynomials[i].subs(x, xi).evalf() for xi in interval_x]
+    y_vals.extend(interval_y)
+    plt.plot(interval_x, interval_y, label=f"Полином {i+1}")
+
+# Отображение исходных точек
+plt.scatter(X, Y, color="red", label="Исходные точки")
+
+# Настройки графика
+plt.title("Кубический сплайн")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.legend()
+plt.grid(True)
+plt.show()

@@ -18,6 +18,9 @@ def g(x):
         raise ValueError(f"Невозможно вычислить логарифм: x[0] + 1 должно быть > 0, текущее значение x[0]: {x[0]}")
     return [np.cos(x[1]) + 1, np.log10(x[0] + 1) + 1]
 
+def dg(x):
+    return [-np.sin(x[1]), 1.0 / (x[0] + 1.0)]
+
 def dxfunction(x):
     return [1, -(1 / (x * np.log(10)))]
 
@@ -25,6 +28,17 @@ def dyfunction(y):
     return [np.sin(y), 1]
 
 def iterations_method(x, epsilon):
+    a = 1.0
+    b = 1.5
+    def get_q(a, b):
+        norm_a = np.linalg.norm(dg([a, 0]))
+        norm_b = np.linalg.norm(dg([b, 0]))
+        return max(norm_a, norm_b)
+    q = get_q(a, b)
+    print(q)
+    if q >= 1:
+        raise ValueError("Условие сходимости метода простых итераций не выполняется (q >= 1).")
+
     iteration = 0
     while True:
         try:
@@ -33,7 +47,7 @@ def iterations_method(x, epsilon):
             print("Ошибка в методе итераций:", e)
             return []
         delta = np.array(x_new) - np.array(x)
-        if np.linalg.norm(delta) <= epsilon:
+        if (q / (1.0 - q)) * np.linalg.norm(delta) <= epsilon:
             break
         x = x_new
         iteration += 1

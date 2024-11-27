@@ -3,6 +3,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+from sympy import symbols, diff, solve, Abs
 
 function = lambda x : x ** 3 + x ** 2 - x - 0.5
 dfunction = lambda x: 3 * (x ** 2) + 2 * x - 1
@@ -10,15 +11,20 @@ d2function = lambda x: 6 * x + 2
 g = lambda x: math.sqrt(x + 0.5 - x ** 3)
 dg = lambda x: (1.0 - 3 * (x ** 2)) / math.sqrt(x + 0.5 - x ** 3)
 
-# значение производных на концах отрезков!!!
 # метод простых итераций
-def iterations_method(x0, epsilon):
+def iterations_method(x0, a, b, epsilon):
+    def get_q(a, b, steps=1000):
+        return max(dg(a), dg(b))
+    q = get_q(a, b)
+    if q >= 1:
+        raise ValueError("Условие сходимости метода простых итераций не выполняется (q >= 1).")
+
     x = x0
     iteration = 0
     while True:
         x_new = g(x)
         iteration += 1
-        if abs(x_new - x) < epsilon:
+        if (q / (1.0 - q)) * abs(x_new - x) < epsilon:
             break
         x = x_new
     return x, iteration
@@ -92,7 +98,7 @@ x0 = 1.0
 
 formatter = lambda arg: format(arg, "0.6f")
 
-root_simple, iter_simple = iterations_method(x0, epsilon)
+root_simple, iter_simple = iterations_method(x0, a, b, epsilon)
 print(f"Метод простой итерации: корень = ", formatter(root_simple), f", итерации = {iter_simple}")
 
 root_bisection, iter_bisection = dichotomy_method(a, b, epsilon)

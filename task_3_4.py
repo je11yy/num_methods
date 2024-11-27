@@ -35,11 +35,15 @@ index = find_i(x, x_star)
 first_diff = find_first_diff(x, y, x_star, index)
 second_diff = find_second_diff(x, y, index)
 
+left_diff = find_left_diff(x, y, index)
+right_diff = find_right_diff(x, y, index)
+
 print(f"Первая производная: {first_diff:.6f}")
+print(f"Проверка, что полусумма: {((left_diff + right_diff) / 2.0):.6f}")
 print(f"Вторая производная: {second_diff:.6f}")
 
-print(f"Левосторонняя производная: {find_left_diff(x, y, index):.6f}")
-print(f"Правосторонняя производная: {find_right_diff(x, y, index):.6f}")
+print(f"Левосторонняя производная: {left_diff:.6f}")
+print(f"Правосторонняя производная: {right_diff:.6f}")
 
 coefficients = np.polyfit(x, y, 2)  
 polynomial = np.poly1d(coefficients)
