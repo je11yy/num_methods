@@ -13,9 +13,10 @@ dg = lambda x: (1.0 - 3 * (x ** 2)) / math.sqrt(x + 0.5 - x ** 3)
 
 # метод простых итераций
 def iterations_method(x0, a, b, epsilon):
-    def get_q(a, b, steps=1000):
+    def get_q(a, b):
         return max(dg(a), dg(b))
     q = get_q(a, b)
+    print(q)
     if q >= 1:
         raise ValueError("Условие сходимости метода простых итераций не выполняется (q >= 1).")
 

@@ -4,13 +4,13 @@ X0 = -2.0
 Xk = 2.0
 h1 = 1.0
 h2 = 0.5
-y = lambda x: (3 * x + 4) / (2 * x + 7)
+y = lambda x: (3.0 * x + 4.0) / (2.0 * x + 7.0)
 
 def rectangle_method(start, end, step):
     n = int((end - start) / step)
     x = start
     result = 0
-    for i in range(n):
+    for _ in range(n):
         prev_x = x
         x += step
         result += y((prev_x + x) / 2)
@@ -19,26 +19,25 @@ def rectangle_method(start, end, step):
 def trapezoid_method(start, end, step):
     n = int((end - start) / step)
     x = start
-    result = y(x) / 2
-    for i in range(1, n - 1):
-        result += y(x)
+    result = 0
+    for _ in range(n):
+        prev_x = x
         x += step
-    result += y(x) / 2
-    return result * step
+        result += (y(x) + y(prev_x))
+    return result * 0.5 * step
 
 def sympson_method(start, end, step):
     n = int((end - start) / step)
     x = start
-    result = y(x)
-    flag = True
-    for i in range(1, n - 1):
-        if flag:
+    result = y(x) + y(end)
+
+    for i in range(1, n):
+        x += step
+        if i % 2 == 1:
             result += 4 * y(x)
         else:
             result += 2 * y(x)
-        flag = not flag
-        x += step
-    result += y(x)
+
     return result * (step / 3.0)
 
 def runge_romberg(I_h1, I_h2, p, h1, h2):
